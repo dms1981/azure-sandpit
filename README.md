@@ -1,2 +1,2 @@
 # azure-sandpit
-Project to create my azure sandpit through Terraform
+Project to create my Microsoft Azure sandpit through Terraform
