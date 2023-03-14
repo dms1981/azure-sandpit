@@ -17,7 +17,8 @@ jobs:
   terraform:
     name: 'Terraform'
     defaults:
-      working-directory: ./terraform
+      run:
+        working-directory: ./terraform
     permissions:
       pull-requests: write
     runs-on: ubuntu-latest
