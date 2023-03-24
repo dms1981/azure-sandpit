@@ -41,7 +41,9 @@ jobs:
           terraform_version: latest
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: |
+          cd terraform
+          terraform init
       - name: Terraform Plan
         id: plan
         run: terraform plan -out=${{ matrix.environment }}-tfplan
@@ -49,7 +51,7 @@ jobs:
         id: cache
         uses: actions/cache/save@v3.3.1
         with:
-          path: ${{ matrix.environment }}-tfplan
+          path: terraform/${{ matrix.environment }}-tfplan
           key: cache-${{ github.run_id }}-${{ github.run_attempt }}
         
   terraform-apply:
@@ -82,7 +84,7 @@ jobs:
         id: cache
         uses: actions/cache/restore@v3.3.1
         with:
-          path: ${{ matrix.environment }}-tfplan
+          path: terraform/${{ matrix.environment }}-tfplan
           key: cache-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Check cache hit
         if: steps.cache.outputs.cache-hit != 'true'
