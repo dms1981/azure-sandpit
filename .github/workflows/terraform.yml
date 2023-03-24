@@ -50,11 +50,12 @@ jobs:
         run: terraform plan -out=${{ matrix.environment }}-tfplan
       - name: Cache tfplan
         id: cache
-        uses: actions/cache@v3.3.1
+        uses: actions/cache/save@v3.3.1
         with:
-          path: ${{ matrix.environment }}-tfplan
-          key: ${{ matrix.environment }}-tfplan-${{ github.sha }}
-          restore-keys: ${{ matrix.environment }}-tfplan-
+          path: |
+            .terraform/
+            ${{ matrix.environment }}-tfplan
+          key: cache-${{ github.run_id }}-${{ github.run_attempt }}
         
   terraform-apply:
     needs: terraform-plan
@@ -91,6 +92,9 @@ jobs:
         with:
           path: ${{ matrix.environment }}-tfplan
           key: ${{ matrix.environment }}-tfplan-${{ github.sha }}
+      - name: Check cache hit
+          if: steps.cache.outputs.cache-hit != 'true'
+          run: exit 1
       - name: Terraform Apply
         id: apply
         run: terraform apply ${{ matrix.environment }}-tfplan
