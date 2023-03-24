@@ -93,8 +93,8 @@ jobs:
           path: ${{ matrix.environment }}-tfplan
           key: ${{ matrix.environment }}-tfplan-${{ github.sha }}
       - name: Check cache hit
-          if: steps.cache.outputs.cache-hit != 'true'
-          run: exit 1
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: exit 1
       - name: Terraform Apply
         id: apply
         run: terraform apply ${{ matrix.environment }}-tfplan
