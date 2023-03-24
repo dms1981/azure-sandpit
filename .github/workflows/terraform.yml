@@ -53,7 +53,7 @@ jobs:
         uses: actions/cache@v3.3.1
         with:
           path: ${{ matrix.environment }}-tfplan
-          key: ${{ matrix.environment }}-tfplan--${{ github.sha }}
+          key: ${{ matrix.environment }}-tfplan-${{ github.sha }}
         
   terraform-apply:
     needs: terraform-plan
@@ -89,7 +89,7 @@ jobs:
         uses: actions/cache/restore@v3.3.1
         with:
           path: ${{ matrix.environment }}-tfplan
-          key: ${{ matrix.environment }}-tfplan--${{ github.sha }}
+          key: ${{ matrix.environment }}-tfplan-${{ github.sha }}
       - name: Terraform Apply
         id: apply
         run: terraform apply ${{ matrix.environment }}-tfplan
