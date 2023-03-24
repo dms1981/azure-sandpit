@@ -55,7 +55,6 @@ jobs:
           path: ${{ matrix.environment }}-tfplan
           key: ${{ matrix.environment }}-tfplan--${{ github.sha }}
         
-jobs:
   terraform-apply:
     needs: terraform-plan
     if: success()
