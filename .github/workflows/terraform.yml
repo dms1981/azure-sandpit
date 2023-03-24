@@ -11,14 +11,15 @@ defaults:
     shell: bash
 
 env:
+  ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  terraform:
-    name: 'Terraform'
-    defaults:
-      run:
-        working-directory: ./terraform
+  terraform-plan:
+    name: 'Terraform Plan'
     permissions:
       pull-requests: write
     runs-on: ubuntu-latest
@@ -26,11 +27,7 @@ jobs:
       matrix:
         environment: [development, test]
     env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-      ENVIRONMENT: ${{ matrix.environment }}
+      TF_IN_AUTOMATION: "true"
       TF_WORKSPACE: ${{ matrix.environment }}
 
     steps:
@@ -41,13 +38,56 @@ jobs:
         id: setup
         uses: hashicorp/setup-terraform@v2.0.3
         with:
-          terraform_version: 1.3.9
+          terraform_version: latest
       - name: Terraform Init
         id: init
         run: terraform init
       - name: Terraform Plan
         id: plan
         run: terraform plan -out=${{ matrix.environment }}-tfplan
+      - name: Cache tfplan
+        id: cache
+        uses: actions/cache/save@v3.3.1
+        with:
+          path: ${{ matrix.environment }}-tfplan
+          key: cache-${{ github.run_id }}-${{ github.run_attempt }}
+        
+  terraform-apply:
+    needs: terraform-plan
+    if: success()
+    name: 'Terraform Apply'
+    permissions:
+      pull-requests: write
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [development, test]
+    env:
+      TF_IN_AUTOMATION: "true"
+      TF_WORKSPACE: ${{ matrix.environment }}
+
+    steps:
+      - name: Checkout code
+        id: checkout
+        uses: actions/checkout@v3.3.0
+      - name: Setup Terraform
+        id: setup
+        uses: hashicorp/setup-terraform@v2.0.3
+        with:
+          terraform_version: latest
+      - name: Terraform Init
+        id: init
+        run: terraform init
+      - name: Restore cache
+        id: cache
+        uses: actions/cache/restore@v3.3.1
+        with:
+          path: ${{ matrix.environment }}-tfplan
+          key: cache-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Check cache hit
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: exit 1
       - name: Terraform Apply
         id: apply
-        run : terraform apply ${{ matrix.environment }}-tfplan
+        run: terraform apply ${{ matrix.environment }}-tfplan
+        
