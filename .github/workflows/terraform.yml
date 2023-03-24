@@ -52,9 +52,7 @@ jobs:
         id: cache
         uses: actions/cache/save@v3.3.1
         with:
-          path: |
-            .terraform/
-            ${{ matrix.environment }}-tfplan
+          path: ${{ matrix.environment }}-tfplan
           key: cache-${{ github.run_id }}-${{ github.run_attempt }}
         
   terraform-apply:
