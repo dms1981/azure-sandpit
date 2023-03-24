@@ -46,7 +46,9 @@ jobs:
           terraform init
       - name: Terraform Plan
         id: plan
-        run: terraform plan -out=${{ matrix.environment }}-tfplan
+        run: |
+          cd terraform
+          terraform plan -out=${{ matrix.environment }}-tfplan
       - name: Cache tfplan
         id: cache
         uses: actions/cache/save@v3.3.1
@@ -79,7 +81,9 @@ jobs:
           terraform_version: latest
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: |
+          cd terraform
+          terraform init
       - name: Restore cache
         id: cache
         uses: actions/cache/restore@v3.3.1
@@ -91,5 +95,7 @@ jobs:
         run: exit 1
       - name: Terraform Apply
         id: apply
-        run: terraform apply ${{ matrix.environment }}-tfplan
+        run: |
+          cd terraform
+          terraform apply ${{ matrix.environment }}-tfplan
         
