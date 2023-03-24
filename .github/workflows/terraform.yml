@@ -54,6 +54,7 @@ jobs:
         with:
           path: ${{ matrix.environment }}-tfplan
           key: ${{ matrix.environment }}-tfplan-${{ github.sha }}
+          restore-keys: ${{ matrix.environment }}-tfplan-
         
   terraform-apply:
     needs: terraform-plan
