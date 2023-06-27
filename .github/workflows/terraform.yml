@@ -27,7 +27,6 @@ jobs:
     strategy:
       matrix:
         environment: [development, test]
-    environment: $$ {{ matrix.environment }}
     env:
       TF_IN_AUTOMATION: "true"
       TF_WORKSPACE: ${{ matrix.environment }}
@@ -68,7 +67,7 @@ jobs:
     strategy:
       matrix:
         environment: [development, test]
-    environment: $$ {{ matrix.environment }}
+    environment: ${{ matrix.environment }}
     env:
       TF_IN_AUTOMATION: "true"
       TF_WORKSPACE: ${{ matrix.environment }}
