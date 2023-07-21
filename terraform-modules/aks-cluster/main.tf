@@ -22,7 +22,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   http_application_routing_enabled = true
 
   default_node_pool {
-    name       = format("%s-%s", random_string.aks-prefix.result, var.name)
+    name       = terraform.workspace
     node_count = 1
     vm_size    = "Standard_D2_v2"
   }
