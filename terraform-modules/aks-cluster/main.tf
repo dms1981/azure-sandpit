@@ -6,10 +6,10 @@ resource "random_string" "aks-prefix" {
 
 resource "azurerm_resource_group" "main" {
   location = var.location
-  name     = format("rg-%s-%s", var.name, terraform.workspace)
+  name     = format("rg-aks-%s", var.name)
   tags = merge(
     var.tags,
-    { Name = format("rg-%s-%s", var.name, terraform.workspace) }
+    { Name = format("rg-aks-%s", var.name) }
   )
 }
 
@@ -21,7 +21,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   http_application_routing_enabled = true
 
   default_node_pool {
-    name       = format("%s-%s-%s", random_string.aks-prefix.result, var.name, terraform.workspace)
+    name       = format("%s-%s", random_string.aks-prefix.result, var.name)
     node_count = 1
     vm_size    = "Standard_D2_v2"
   }

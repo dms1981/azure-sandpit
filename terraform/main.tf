@@ -21,6 +21,6 @@ resource "azurerm_virtual_network" "main" {
 module "aks_cluster" {
   source = "../terraform-modules/aks-cluster"
   location = azurerm_resource_group.main.location
-  name = "dms1981"
+  name = format("dms1981-%s", terraform.workspace)
   tags = local.tags
 }
