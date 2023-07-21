@@ -1,5 +1,6 @@
 resource "random_string" "aks-prefix" {
   length  = 12
+  numeric = false
   special = false
   upper   = false
 }
