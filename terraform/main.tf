@@ -17,3 +17,10 @@ resource "azurerm_virtual_network" "main" {
     { Name = format("vnet-dms1981-%s", terraform.workspace) }
   )
 }
+
+module "aks_cluster" {
+  source = "../terraform-modules/aks-cluster"
+  location = azurerm_resource_group.main.location
+  name = "dms1981"
+  tags = local.tags
+}
