@@ -19,3 +19,5 @@ run "test-vnet" {
     error_message = "Vnet is not in correct resource group."
   }
 }
+
+run "test-webapp" {}
