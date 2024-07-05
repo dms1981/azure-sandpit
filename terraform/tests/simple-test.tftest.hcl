@@ -19,3 +19,15 @@ run "test-vnet" {
     error_message = "Vnet is not in correct resource group."
   }
 }
+
+run "test-webapp" {
+  module { source = "./modules/static-website" }
+  variables {
+    files = ["./website/index.html"]
+    name  = "unittest"
+  }
+  assert {
+    condition     = strcontains(data.http.get-status.status_code, "200")
+    error_message = "Static website did not return a 200 code"
+  }
+}
