@@ -39,3 +39,13 @@ resource "azurerm_storage_blob" "main" {
   content_md5            = filemd5(each.key)
   source                 = each.key
 }
+
+resource "time_sleep" "main" {
+  depends_on = [azurerm_storage_account.main]
+  create_duration = "20s"
+}
+
+data "http" "get-status" {
+  depends_on = [time_sleep.main]
+  url = azurerm_storage_account.main.primary_web_endpoint
+}
