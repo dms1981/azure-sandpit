@@ -23,11 +23,12 @@ run "test-vnet" {
 run "test-webapp" {
   module { source = "./modules/static-website" }
   variables {
-    files = ["./website/index.html"]
-    name  = "unittest"
+    files     = ["./website/index.html"]
+    name      = "unittest"
+    unit_test = true
   }
   assert {
-    condition     = strcontains(data.http.get-status.status_code, "200")
+    condition     = strcontains(data.http.get-status["enabled"].status_code, "200")
     error_message = "Static website did not return a 200 code"
   }
 }

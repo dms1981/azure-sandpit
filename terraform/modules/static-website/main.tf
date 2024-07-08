@@ -16,7 +16,7 @@ resource "azurerm_storage_account" "main" {
   account_replication_type = "LRS"
   account_kind             = "StorageV2"
   location                 = azurerm_resource_group.main.location
-  name                     = replace(format("%s-%s", random_id.name.hex, var.name), "-","")
+  name                     = replace(format("%s-%s", random_id.name.hex, var.name), "-", "")
   resource_group_name      = azurerm_resource_group.main.name
 
   static_website {
@@ -38,14 +38,4 @@ resource "azurerm_storage_blob" "main" {
   content_type           = "text/html"
   content_md5            = filemd5(each.key)
   source                 = each.key
-}
-
-resource "time_sleep" "main" {
-  depends_on = [azurerm_storage_account.main]
-  create_duration = "20s"
-}
-
-data "http" "get-status" {
-  depends_on = [time_sleep.main]
-  url = azurerm_storage_account.main.primary_web_endpoint
 }
